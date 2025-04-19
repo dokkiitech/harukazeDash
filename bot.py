@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord import app_commands
 import os
 from dotenv import load_dotenv
-from game_logic import handle_dash, handle_chase
+from game_logic import handle_dash
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -19,8 +19,8 @@ async def on_ready():
 @bot.tree.command(name="dash", description="逃走にチャレンジ！")
 async def dash(interaction: discord.Interaction):
     user = interaction.user
-    success, coins = handle_dash(user.id, user.name)
-    if success:
+    success, coins = handle_dash(user.id)
+    if success == 1:
         await interaction.response.send_message(f"🏃‍♂️ {user.name} は逃げ切った！ +10コイン（現在: {coins}）")
     else:
         await interaction.response.send_message(f"😵 {user.name} は捕まった… -5コイン（現在: {coins}）")

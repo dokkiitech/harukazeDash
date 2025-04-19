@@ -1,13 +1,26 @@
-from db_utils import get_or_create_user  # またはファイル内に直接定義されてるならそのままでOK
+from supabase import create_client
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+from discord.ext import commands
+from supabase_access import get_user_data, save_user_data
 import random
 
-def handle_dash(user_id, username):
-    user = get_or_create_user(user_id, username)
-    
+def handle_dash(user_id):
+    user = get_user_data(user_id) # ユーザーデータを取得または初期化
+
     # 成功か失敗をランダムに決定
     success = random.random() < 0.5  # 50% 成功
 
     if success:
+        success = 1
         user['coins'] += 10
         user['dash_success'] += 1
     else:
@@ -15,12 +28,7 @@ def handle_dash(user_id, username):
     
     user['dash_count'] += 1
 
-    # Supabaseに更新
-    from main import supabase  # もしくは supabase が使えるように import しておく
-    supabase.table("users").update({
-        "coins": user['coins'],
-        "dash_success": user['dash_success'],
-        "dash_count": user['dash_count']
-    }).eq("discord_id", user_id).execute()
+    # supabaseに保存
+    save_user_data(user)
 
     return success, user['coins']
