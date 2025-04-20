@@ -15,6 +15,7 @@ bot = commands.Bot(command_prefix="/", intents=intents)  # tree は自動で bot
 async def on_ready():
     await bot.tree.sync()  # 自動生成された tree を使う
     print(f"Logged in as {bot.user.name}")
+    # print(f"Bot ID: {bot.user.id}") #debug
 
 @bot.tree.command(name="dash", description="逃走にチャレンジ！")
 async def dash(interaction: discord.Interaction):
