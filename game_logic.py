@@ -10,7 +10,7 @@ def handle_dash(user_id):
 
     if success:
         success = 1
-        user_data['coins'] += 10
+        user_data['coins'] += 5
         user_data['dash_success'] += 1
     else:
         user_data['coins'] -= 5
