@@ -16,7 +16,8 @@ def initialize_user_data(user_id): # Supabase初期化
         "dash_count": 0,
         "dash_success": 0,
         "chase_count": 0,
-        "chase_success": 0
+        "chase_success": 0,
+        "dash_continue": 0
     }
     supabase.table("users").upsert(user_data).execute()
     print("[Initialize]:", user_data) #debug
@@ -41,7 +42,8 @@ def save_user_data(user_id, user_data):# Supabase保存
             "dash_count": user_data["dash_count"],
             "dash_success": user_data["dash_success"],
             "chase_count": user_data["chase_count"],
-            "chase_success": user_data["chase_success"]
+            "chase_success": user_data["chase_success"],
+            "dash_continue": user_data["dash_continue"]
         }
     ).eq("discord_id", user_id).execute()
 

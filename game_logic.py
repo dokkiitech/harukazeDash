@@ -1,26 +1,42 @@
 from discord.ext import commands
 from supabase_access import get_user_data, save_user_data
+from google_gemini import dash_response
 import random
+import json
 
 def handle_dash(user_id):
     user_data = get_user_data(user_id) # ユーザーデータを取得または初期化
 
     # 成功か失敗をランダムに決定
-    success = random.random() < 0.5  # 50% 成功
+    # success = random.random() < 0.5  # 50% 成功
 
-    if success:
+    # if success:
+    #     success = 1
+    #     user_data['coins'] += 5
+    #     user_data['dash_success'] += 1
+    # else:
+    #     user_data['coins'] -= 5
+    
+    # user_data['dash_count'] += 1
+    response = dash_response(user_id)  # Google Gemini APIを使用して成功か失敗を決定
+    print ("[Gemini]:", response) #debug
+
+    if response[0]["result"] == True:
         success = 1
         user_data['coins'] += 5
         user_data['dash_success'] += 1
-    else:
+        user_data['dash_continue'] += 1
+    elif response[0]["result"] == False:
+        success = 0
         user_data['coins'] -= 5
+        user_data['dash_continue'] = 0
     
     user_data['dash_count'] += 1
 
     # supabaseに保存
     save_user_data(user_id, user_data)
 
-    return success, user_data['coins']
+    return success, user_data['coins'], response[0]['reason']
 
 def handle_chase(chaser_user_id, target_user_id):
     chaser_user_data = get_user_data(chaser_user_id) # ユーザーデータを取得または初期化
